@@ -2,10 +2,23 @@
 
 #[http://ei.lenggirl.com](http://ei.lenggirl.com "中小企业智能展示平台")
 
+
 # 使用说明
 1.使用先将sql导入数据库，改下数据库配置，配置文件在Application/Common/Conf/config.php
 
 2.接着装Nginx,将以下配置放进Nginx配置目录中
+
+重启： 
+
+/etc/init.d/php5-fpm restart
+
+/usr/local/nginx# sbin/nginx -s reload
+
+编辑 /usr/local/nginx/conf# vim nginx.conf  
+
+并且nginx.conf 增加include sites/*.conf;
+
+新建sites文件夹，在sites文件夹中放入：
 ```
 server{
 	listen 80;
