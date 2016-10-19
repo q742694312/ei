@@ -1,5 +1,7 @@
 # ThinkPHP3.2.3完整多用户博客，可观摩学习，完整项目练手，这。。。。不敢说是毕业设计
 
+#[http://ei.lenggirl.com](http://ei.lenggirl.com "中小企业智能展示平台")
+
 # 使用说明
 1.使用先将sql导入数据库，改下数据库配置，配置文件在Application/Common/Conf/config.php
 
@@ -91,4 +93,4 @@ if ($rule_0 = "21"){
 <img src='https://raw.githubusercontent.com/hunterhug/ei/master/seem2.jpg' />
 <img src='https://raw.githubusercontent.com/hunterhug/ei/master/seem3.jpg' />
 <img src='https://raw.githubusercontent.com/hunterhug/ei/master/seem4.jpg' />
-#[http://www.lenggirl.com](http://www.lenggirl.com "中小企业智能展示平台")
+#[http://ei.lenggirl.com](http://ei.lenggirl.com "中小企业智能展示平台")
