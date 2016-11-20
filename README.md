@@ -1,6 +1,7 @@
-# ThinkPHP3.2.3 multi user blog
+# MULTI USER BLOG (ThinkPHP)
 
-#[http://ei.lenggirl.com](http://ei.lenggirl.com "中小企业智能展示平台")
+
+[http://ei.lenggirl.com](http://ei.lenggirl.com "中小企业智能展示平台")
 
 
 # 使用说明
@@ -142,6 +143,29 @@ if ($rule_0 = "21"){
 apache重写规则
 
 ```
+<IfModule mod_rewrite.c>
+  Options +FollowSymlinks
+  RewriteEngine On
+
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  #
+  RewriteRule ^u/(.+)/page/(.+)/pageno/(.+)$ index.php/Ei/User/page?username=$1&id=$2&pageno=$3 [NC,QSA,PT,L]
+  RewriteRule ^u/(.+)/page/(.+)$ index.php/Ei/User/page?username=$1&id=$2 [NC,QSA,PT,L]
+  RewriteRule ^u/(.+)/article/(.+)$ index.php/Ei/User/article?username=$1&id=$2 [NC,QSA,PT,L]
+  RewriteRule ^u/(.+)/product$ index.php/Ei/User/product?username=$1 [NC,QSA,PT,L]
+  RewriteRule ^u/(.+)/product/(.*)/pageno/(.+) index.php/Ei/User/product?username=$1&id=$2&pageno=$3 [NC,QSA,PT,L]
+  RewriteRule ^u/(.+)/product/(.+)$ index.php/Ei/User/product?username=$1&id=$2 [NC,QSA,PT,L] 
+  RewriteRule ^u/(.+)/i/(.+)$ index.php/Ei/User/pc?username=$1&id=$2 [NC,QSA,PT,L] 
+  RewriteRule ^u/(.+)/about/(.+)$ index.php/Ei/User/about?username=$1&id=$2 [NC,QSA,PT,L] 
+  RewriteRule ^u/(.+)$ index.php/Ei/User/index?username=$1 [NC,QSA,PT,L]
+  
+  RewriteRule ^page/(.+)/pageno/(.+)$ index.php/Home/Index/page?id=$1&pageno=$2 [NC,QSA,PT,L]
+  RewriteRule ^page/(.+)$ index.php/Home/Index/page?id=$1 [NC,QSA,PT,L]
+  RewriteRule ^article/(.+)$ index.php/Home/Index/article?id=$1 [NC,QSA,PT,L]
+  RewriteRule ^about/(.+)$ index.php/Home/Index/about?id=$1 [NC,QSA,PT,L]
+  RewriteRule ^(Home|Admin|Ei)/?(.*)$ index.php/$1/$2 [NC,QSA,PT,L]
+</IfModule>
 ```
 
 服务器安装可能要开启PHP重写等模块，有问题可以star咨询
