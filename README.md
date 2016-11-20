@@ -1,4 +1,6 @@
-# ThinkPHP3.2.3完整多用户博客，可观摩学习，完整项目练手，这。。。。不敢说是毕业设计
+# ThinkPHP3.2.3完整多用户博客
+
+可观摩学习，完整项目练手，这。。。。不敢说是毕业设计
 
 #[http://ei.lenggirl.com](http://ei.lenggirl.com "中小企业智能展示平台")
 
@@ -8,17 +10,26 @@
 
 2.接着装Nginx,将以下配置放进Nginx配置目录中
 
-重启： 
+启动PHP所需模块，注意还有其他如ssl等模块也要开启，百度！
 
+```
 /etc/init.d/php5-fpm restart
+```
 
-/usr/local/nginx# sbin/nginx -s reload
+进入 /usr/local/nginx/conf
 
-编辑 /usr/local/nginx/conf# vim nginx.conf  
+```
+# vim nginx.conf  
+```
 
-并且nginx.conf 增加include sites/*.conf;
+并且nginx.conf最后增加
+
+```
+include sites/*.conf;
+```
 
 新建sites文件夹，在sites文件夹中放入：
+
 ```
 server{
 	listen 80;
@@ -67,7 +78,13 @@ server{
 }
 ```
 
-3.然后URL改写，在根目录放.htacess
+Nginx重启
+
+```
+/usr/local/nginx# sbin/nginx -s reload
+```
+
+3.然后URL改写，在根目录放.htacess(如果是apache服务器的话.htacess是不一样的，见根目录几个htacess文件。
 
 ```
 if (!-d $request_filename){
