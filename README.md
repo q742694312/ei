@@ -75,13 +75,26 @@ sudo apt-get install libapache2-mod-php7.0
 sudo /etc/init.d/apache2 restart
 ```
 
+Apache初始目录在`/var/www/html`
+
+```
+sudo vim /var/www/html/test.php
+
+
+<?php
+echo phpinfo();
+?>
+```
+
+打开浏览器:`127.0.0.1/test.php`查看是否有问题
+
 Apache配置在`/etc/apache2`下。
 
 
 进行配置，使其能找到网站的文件位置
 
 ```
-sudo /etc/apache2/
+sudo cd /etc/apache2/
 sudo cd sites-available
 sudo cp 000-default.conf ei.conf
 sudo vim ei.conf
