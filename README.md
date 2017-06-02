@@ -3,6 +3,7 @@
 
 [http://ei.lenggirl.com](http://ei.lenggirl.com "中小企业智能展示平台")
 
+我选择狗带，太久没装过PHP，都不会装了，我了哥擦，弃用！！！大家自己能装的上！
 
 # 使用说明
 
@@ -284,7 +285,7 @@ http://ei.lengirl.com
 
 用户:hunterhug
 
-密码:
+密码:请md5反解，我忘了。。。
 
 # 其他
 
