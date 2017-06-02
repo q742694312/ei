@@ -6,7 +6,38 @@
 
 # 使用说明
 
-1.使用前先将sql导入数据库，改下数据库配置，配置文件在Application/Common/Conf/config.php
+## 1.使用前先安装MYSQL(百度一堆)
+
+a. Ubuntu安装
+
+敲入以下命令按提示操作
+
+```
+sudo apt-get install mysql-server mysql-client
+```
+
+b. Windows安装
+
+
+[https://yun.baidu.com/s/1hrF0QC8](https://yun.baidu.com/s/1hrF0QC8) 找到mysql文件夹下面的5.6.17.0.msi根据说明安装.
+
+
+## 2.导入sql数据库
+
+数据库 文件在根目录:lenggirl.sql
+
+```
+C:\Users\huterhug>mysql -uroot -p
+Enter password: *********
+
+mysql> create database tuzi;
+mysql> use tuzi
+mysql> source init.sql
+
+```
+
+### 3.改网站配置
+改下数据库配置，配置文件在`Application/Common/Conf/config.php`,只需改以下
 
 ```
 <?php
@@ -21,31 +52,120 @@ return array (
 		'DB_PWD' => 6833066, // 密码
 		'DB_PORT' => 3306, // 端口
 		                                  
-		// 数据库表前缀URL访问模式,可选参数0、1、2、3,代表以下四种模式：
-		                                  // 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE 模式); 3 (兼容模式) 默认为PATHINFO 模式
-		'URL_MODEL' => '2',
-		
-		'USER_AUTH_KEY' => 'userid', // 用户会话标识
-		'NEEDLOGIN' => 1, // 1表示登陆开启，其他表示关闭
+
 		'ADMIN_AUTH_KEY' => array (
 				'hunterhug' 
 		), // 超级管理员
+
 		//首页展示者
 		'HOMEUSER'=>'hunterhug',
-		'REGISTER' => 1,
-		//'SHOW_PAGE_TRACE'=>true
-	//	'DB_2' => 'mysql://root:6833066@localhost:3306/qingmu'
 		
 )
 ;
 ```
 
-2.接着装Nginx,将以下配置放进Nginx配置目录中
+### 4.装Apache+PHP模式（有问题）
+
+仅仅支持Linux(ubuntu16.04示例）,Windows大法请自行安装
+
+```
+sudo apt-get install apache2
+sudo apt-get install php7.0-cli
+sudo apt-get install libapache2-mod-php7.0
+sudo /etc/init.d/apache2 restart
+```
+
+Apache配置在`/etc/apache2`下。
+
+
+进行配置，使其能找到网站的文件位置
+
+```
+sudo /etc/apache2/
+sudo cd sites-available
+sudo cp 000-default.conf ei.conf
+sudo vim ei.conf
+```
+
+```
+<VirtualHost ei.lenggirl.com:80>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        #ServerName www.example.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /home/jinhan/book/ei
+
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
+
+        ErrorLog ${APACHE_LOG_DIR}/eierror.log
+        CustomLog ${APACHE_LOG_DIR}/eiaccess.log combined
+
+        # For most configuration files from conf-available/, which are
+        # enabled or disabled at a global level, it is possible to
+        # include a line for only one particular virtual host. For example the
+        # following line enables the CGI configuration for this host only
+        # after it has been globally disabled with "a2disconf".
+        #Include conf-available/serve-cgi-bin.conf
+</VirtualHost>
+
+```
+
+其中`/home/jinhan/book/ei`是这个项目文件位置，本机测试将`ei.lenggirl.com:80`改为`127.0.0.1:81`
+
+启动：
+
+```
+sudo a2ensite ei.conf 
+sudo service apache2 reload
+```
+
+启动后apache要重写规则。在项目根目录下的`.htaccess`即是(可忽略)。
+
+```
+<IfModule mod_rewrite.c>
+  Options +FollowSymlinks
+  RewriteEngine On
+
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  #
+  RewriteRule ^u/(.+)/page/(.+)/pageno/(.+)$ index.php/Ei/User/page?username=$1&id=$2&pageno=$3 [NC,QSA,PT,L]
+  RewriteRule ^u/(.+)/page/(.+)$ index.php/Ei/User/page?username=$1&id=$2 [NC,QSA,PT,L]
+  RewriteRule ^u/(.+)/article/(.+)$ index.php/Ei/User/article?username=$1&id=$2 [NC,QSA,PT,L]
+  RewriteRule ^u/(.+)/product$ index.php/Ei/User/product?username=$1 [NC,QSA,PT,L]
+  RewriteRule ^u/(.+)/product/(.*)/pageno/(.+) index.php/Ei/User/product?username=$1&id=$2&pageno=$3 [NC,QSA,PT,L]
+  RewriteRule ^u/(.+)/product/(.+)$ index.php/Ei/User/product?username=$1&id=$2 [NC,QSA,PT,L] 
+  RewriteRule ^u/(.+)/i/(.+)$ index.php/Ei/User/pc?username=$1&id=$2 [NC,QSA,PT,L] 
+  RewriteRule ^u/(.+)/about/(.+)$ index.php/Ei/User/about?username=$1&id=$2 [NC,QSA,PT,L] 
+  RewriteRule ^u/(.+)$ index.php/Ei/User/index?username=$1 [NC,QSA,PT,L]
+  
+  RewriteRule ^page/(.+)/pageno/(.+)$ index.php/Home/Index/page?id=$1&pageno=$2 [NC,QSA,PT,L]
+  RewriteRule ^page/(.+)$ index.php/Home/Index/page?id=$1 [NC,QSA,PT,L]
+  RewriteRule ^article/(.+)$ index.php/Home/Index/article?id=$1 [NC,QSA,PT,L]
+  RewriteRule ^about/(.+)$ index.php/Home/Index/about?id=$1 [NC,QSA,PT,L]
+  RewriteRule ^(Home|Admin|Ei)/?(.*)$ index.php/$1/$2 [NC,QSA,PT,L]
+</IfModule>
+```
+
+
+### 5.装Nginx+PHP模式（有问题）
+ 
+安装NGINX
 
 进入 /usr/local/nginx/conf
 
 ```
-# vim nginx.conf  
+vim nginx.conf
 ```
 
 并且nginx.conf最后增加
@@ -54,7 +174,7 @@ return array (
 include sites/*.conf;
 ```
 
-新建sites文件夹，在sites文件夹中放入：
+新建sites文件夹，在sites文件夹中放入该项目下`ei-nginx.conf`文件：
 
 ```
 server{
@@ -104,15 +224,10 @@ server{
 }
 ```
 
-Nginx重启
 
-```
-/usr/local/nginx# sbin/nginx -s reload
-```
+本机测试将`ei.lenggirl.com`改为`127.0.0.1`,`80`改为`81`
 
-3.然后URL改写，在根目录放.htacess(如果是apache服务器的话.htacess是不一样的，nginx的请见根目录下nginx.htacess文件。
-
-nginx重写规则
+启动后apache要重写规则。在项目根目录下的`ngnix.htaccess`即是(可忽略)。
 
 ```
 if (!-d $request_filename){
@@ -140,41 +255,23 @@ if ($rule_0 = "21"){
 
 ```
 
-apache重写规则
+Nginx重启
 
 ```
-<IfModule mod_rewrite.c>
-  Options +FollowSymlinks
-  RewriteEngine On
-
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{REQUEST_FILENAME} !-f
-  #
-  RewriteRule ^u/(.+)/page/(.+)/pageno/(.+)$ index.php/Ei/User/page?username=$1&id=$2&pageno=$3 [NC,QSA,PT,L]
-  RewriteRule ^u/(.+)/page/(.+)$ index.php/Ei/User/page?username=$1&id=$2 [NC,QSA,PT,L]
-  RewriteRule ^u/(.+)/article/(.+)$ index.php/Ei/User/article?username=$1&id=$2 [NC,QSA,PT,L]
-  RewriteRule ^u/(.+)/product$ index.php/Ei/User/product?username=$1 [NC,QSA,PT,L]
-  RewriteRule ^u/(.+)/product/(.*)/pageno/(.+) index.php/Ei/User/product?username=$1&id=$2&pageno=$3 [NC,QSA,PT,L]
-  RewriteRule ^u/(.+)/product/(.+)$ index.php/Ei/User/product?username=$1&id=$2 [NC,QSA,PT,L] 
-  RewriteRule ^u/(.+)/i/(.+)$ index.php/Ei/User/pc?username=$1&id=$2 [NC,QSA,PT,L] 
-  RewriteRule ^u/(.+)/about/(.+)$ index.php/Ei/User/about?username=$1&id=$2 [NC,QSA,PT,L] 
-  RewriteRule ^u/(.+)$ index.php/Ei/User/index?username=$1 [NC,QSA,PT,L]
-  
-  RewriteRule ^page/(.+)/pageno/(.+)$ index.php/Home/Index/page?id=$1&pageno=$2 [NC,QSA,PT,L]
-  RewriteRule ^page/(.+)$ index.php/Home/Index/page?id=$1 [NC,QSA,PT,L]
-  RewriteRule ^article/(.+)$ index.php/Home/Index/article?id=$1 [NC,QSA,PT,L]
-  RewriteRule ^about/(.+)$ index.php/Home/Index/about?id=$1 [NC,QSA,PT,L]
-  RewriteRule ^(Home|Admin|Ei)/?(.*)$ index.php/$1/$2 [NC,QSA,PT,L]
-</IfModule>
+/usr/local/nginx# sbin/nginx -s reload
 ```
 
-服务器安装可能要开启PHP重写等模块，有问题可以star咨询
+### 6.打开浏览器
 
-启动PHP所需模块，注意还有其他如ssl等模块也要开启，百度！
+http://127.0.0.1:81
 
-```
-/etc/init.d/php5-fpm restart
-```
+http://ei.lengirl.com
+
+后台http://ei.lenggirl.com/admin/public/login.html
+
+用户:hunterhug
+
+密码:
 
 # 其他
 
